@@ -10,11 +10,18 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "ts-node": "ts-node",
     "calculateBmi": "ts-node src/bmiCalculator.ts",
-    "calculateExercises": "ts-node src/exerciseCalculator.ts"
+    "calculateExercises": "ts-node src/exerciseCalculator.ts",
+    "dev": "ts-node-dev src/index.ts",
+    "start": "ts-node src/index.ts"
   },
   "devDependencies": {
+    "@types/express": "^5.0.0",
     "@types/node": "^22.13.10",
     "ts-node": "^10.9.2",
+    "ts-node-dev": "^2.0.0",
     "typescript": "^5.8.2"
+  },
+  "dependencies": {
+    "express": "^4.21.2"
   }
 }
