@@ -1,5 +1,5 @@
 import express from "express";
-import computeBmi from "./bmiCalculator";
+import { calculateBmi } from "./bmiCalculator";
 const app = express();
 
 app.get("/hello", (_req, res) => {
@@ -7,13 +7,14 @@ app.get("/hello", (_req, res) => {
 });
 
 app.get("/bmi", (req, res) => {
-  const { height, weight } = req.query;
-  if (!height || !weight) {
-    res.json({ error: "missing parameter" });
+  const height = Number(req.query.height);
+  const weight = Number(req.query.weight);
+  if (isNaN(height) || isNaN(weight)) {
+    res.json({ error: "Parameters are not numbers" });
     return;
   }
   try {
-    const message = computeBmi([height as string, weight as string]);
+    const message = calculateBmi(height, weight);
     res.json({
       weight,
       height,

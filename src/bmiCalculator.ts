@@ -4,18 +4,18 @@ interface CalculateBmiValues {
 }
 
 const parseArguments = (args: string[]): CalculateBmiValues => {
-  if (args.length != 2) throw new Error("Need exactly 2 arguments");
-  if (!isNaN(Number(args[0])) && !isNaN(Number(args[1]))) {
+  if (args.length != 4) throw new Error("Need exactly 2 arguments");
+  if (!isNaN(Number(args[2])) && !isNaN(Number(args[3]))) {
     return {
-      height: Number(args[0]),
-      weight: Number(args[1]),
+      height: Number(args[2]),
+      weight: Number(args[3]),
     };
   } else {
     throw new Error("Provided values are not numbers");
   }
 };
 
-const calculateBmi = (heightCm: number, weightKg: number): string => {
+export const calculateBmi = (heightCm: number, weightKg: number): string => {
   if (heightCm <= 0) {
     throw new Error("height must be greater than 0");
   }
@@ -35,25 +35,15 @@ const calculateBmi = (heightCm: number, weightKg: number): string => {
   }
 };
 
-const computeBmi = (argv: string[]): string => {
+if (require.main === module) {
   try {
-    const { height, weight } = parseArguments(argv);
-    return calculateBmi(height, weight);
+    const { height, weight } = parseArguments(process.argv);
+    console.log(calculateBmi(height, weight));
   } catch (error: unknown) {
     let message = "Something went wrong: ";
     if (error instanceof Error) {
       message += "Error: " + error.message;
     }
-    throw new Error(message);
-  }
-};
-
-if (require.main === module) {
-  try {
-    console.log(computeBmi(process.argv.slice(2)));
-  } catch (error) {
-    console.log(error.message);
+    console.error(message);
   }
 }
-
-export default computeBmi;
