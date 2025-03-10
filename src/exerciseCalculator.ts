@@ -1,4 +1,4 @@
-interface TrainingReport {
+export interface TrainingReport {
   periodLength: number;
   trainingDays: number;
   success: boolean;
@@ -44,9 +44,9 @@ export const calculateExercises = (
   let ratingDescription: string;
   const targetPercentage = average / targetHours;
   switch (true) {
-    case targetPercentage <= 0.4: {
+    case targetPercentage <= 0.6: {
       rating = 1;
-      ratingDescription = "a lot space from improvement";
+      ratingDescription = "a lot space of improvement";
       break;
     }
     case targetPercentage < 0.8: {
@@ -74,13 +74,15 @@ export const calculateExercises = (
   };
 };
 
-try {
-  const { dailyHours, target } = parseArguments(process.argv);
-  console.log(calculateExercises(dailyHours, target));
-} catch (error) {
-  let message = "Something went wrong: ";
-  if (error instanceof Error) {
-    message += "Error: " + error.message;
+if (require.main === module) {
+  try {
+    const { dailyHours, target } = parseArguments(process.argv);
+    console.log(calculateExercises(dailyHours, target));
+  } catch (error) {
+    let message = "Something went wrong: ";
+    if (error instanceof Error) {
+      message += "Error: " + error.message;
+    }
+    console.error(message);
   }
-  console.error(message);
 }

@@ -1,6 +1,9 @@
 import express from "express";
 import { calculateBmi } from "./bmiCalculator";
+import { calculateExercises, TrainingReport } from "./exerciseCalculator";
 const app = express();
+
+app.use(express.json());
 
 app.get("/hello", (_req, res) => {
   res.send("Hello Full Stack!");
@@ -28,6 +31,41 @@ app.get("/bmi", (req, res) => {
     res.json({
       error: message,
     });
+  }
+});
+
+app.post("/exercises", (req, res) => {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment
+  const dailyExercises = req.body.daily_exercises;
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment
+  const target = req.body.target;
+
+  if (!dailyExercises || !target) {
+    res.json({ error: "parameters missing" });
+    return;
+  }
+  if (
+    isNaN(Number(target)) ||
+    !Array.isArray(dailyExercises) ||
+    dailyExercises.length === 0 ||
+    dailyExercises.some(isNaN)
+  ) {
+    res.json({ error: "malformatted parameters" });
+    return;
+  }
+
+  try {
+    const message: TrainingReport = calculateExercises(
+      dailyExercises as number[],
+      Number(target)
+    );
+    res.json(message);
+  } catch (error) {
+    let errMessage = "Error: ";
+    if (error instanceof Error) {
+      errMessage += error.message;
+    }
+    res.json({ error: errMessage });
   }
 });
 
