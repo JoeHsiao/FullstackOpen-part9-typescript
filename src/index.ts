@@ -21,8 +21,12 @@ app.get("/bmi", (req, res) => {
       bmi: message,
     });
   } catch (error) {
+    let message = "Error: ";
+    if (error instanceof Error) {
+      message += error.message;
+    }
     res.json({
-      error: error.message,
+      error: message,
     });
   }
 });

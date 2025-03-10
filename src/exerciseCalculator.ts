@@ -1,35 +1,41 @@
 interface TrainingReport {
-  periodLength: number,
-  trainingDays: number,
-  success: boolean,
-  rating: number,
-  ratingDescription: string,
-  target: number,
-  average: number
+  periodLength: number;
+  trainingDays: number;
+  success: boolean;
+  rating: number;
+  ratingDescription: string;
+  target: number;
+  average: number;
 }
 
 interface TrainingInput {
-  dailyHours: number[],
-  target: number
+  dailyHours: number[];
+  target: number;
 }
 
 const parseArguments = (args: string[]): TrainingInput => {
-  if (args.length < 2) throw new Error('Number of arguments must be >= 2');
+  if (args.length < 2) throw new Error("Number of arguments must be >= 2");
 
   const params = args.slice(2);
-  if (params.every(x => !isNaN(Number(x)))) {
-      return {
-          dailyHours: params.slice(1).map(x => Number(x)),
-          target: Number(params[0])
-      }
+  if (params.every((x) => !isNaN(Number(x)))) {
+    return {
+      dailyHours: params.slice(1).map((x) => Number(x)),
+      target: Number(params[0]),
+    };
   } else {
-      throw new Error('Provided values are not numbers');
+    throw new Error("Provided values are not numbers");
   }
-}
+};
 
-export const calculateExercises = (dailyHours: number[], targetHours: number): TrainingReport => {
+export const calculateExercises = (
+  dailyHours: number[],
+  targetHours: number
+): TrainingReport => {
   const periodLength = dailyHours.length;
-  const trainingDays = dailyHours.reduce((sum, cur) => cur > 0 ? sum + 1 : sum, 0);
+  const trainingDays = dailyHours.reduce(
+    (sum, cur) => (cur > 0 ? sum + 1 : sum),
+    0
+  );
   const totalHours = dailyHours.reduce((sum, cur) => sum + cur, 0);
   const average = totalHours / periodLength;
   const success = average >= targetHours;
@@ -38,19 +44,19 @@ export const calculateExercises = (dailyHours: number[], targetHours: number): T
   let ratingDescription: string;
   const targetPercentage = average / targetHours;
   switch (true) {
-    case (targetPercentage <= 0.4): {
+    case targetPercentage <= 0.4: {
       rating = 1;
-      ratingDescription = 'a lot space from improvement';
+      ratingDescription = "a lot space from improvement";
       break;
     }
-    case (targetPercentage < 0.8): {
+    case targetPercentage < 0.8: {
       rating = 2;
-      ratingDescription = 'not too bad but could be better';
+      ratingDescription = "not too bad but could be better";
       break;
     }
-    case (targetPercentage >= 0.8): {
+    case targetPercentage >= 0.8: {
       rating = 3;
-      ratingDescription = 'excelent job';
+      ratingDescription = "excelent job";
       break;
     }
     default:
@@ -64,17 +70,17 @@ export const calculateExercises = (dailyHours: number[], targetHours: number): T
     rating,
     ratingDescription,
     target: targetHours,
-    average
-  }
-}
+    average,
+  };
+};
 
 try {
-  const {dailyHours, target} = parseArguments(process.argv);
+  const { dailyHours, target } = parseArguments(process.argv);
   console.log(calculateExercises(dailyHours, target));
 } catch (error) {
-  let message = 'Something went wrong: ';
+  let message = "Something went wrong: ";
   if (error instanceof Error) {
-    message += 'Error: ' + error.message
+    message += "Error: " + error.message;
   }
   console.error(message);
 }
