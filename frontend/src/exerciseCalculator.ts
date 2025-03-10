@@ -8,7 +8,26 @@ interface TrainingReport {
   average: number
 }
 
-const calculateExercises = (dailyHours: number[], targetHours: number): TrainingReport => {
+interface TrainingInput {
+  dailyHours: number[],
+  target: number
+}
+
+const parseArguments = (args: string[]): TrainingInput => {
+  if (args.length < 2) throw new Error('Number of arguments must be >= 2');
+
+  const params = args.slice(2);
+  if (params.every(x => !isNaN(Number(x)))) {
+      return {
+          dailyHours: params.slice(1).map(x => Number(x)),
+          target: Number(params[0])
+      }
+  } else {
+      throw new Error('Provided values are not numbers');
+  }
+}
+
+export const calculateExercises = (dailyHours: number[], targetHours: number): TrainingReport => {
   const periodLength = dailyHours.length;
   const trainingDays = dailyHours.reduce((sum, cur) => cur > 0 ? sum + 1 : sum, 0);
   const totalHours = dailyHours.reduce((sum, cur) => sum + cur, 0);
@@ -49,4 +68,13 @@ const calculateExercises = (dailyHours: number[], targetHours: number): Training
   }
 }
 
-console.log(calculateExercises([3, 0, 2, 4.5, 0, 3, 1], 2))
+try {
+  const {dailyHours, target} = parseArguments(process.argv);
+  console.log(calculateExercises(dailyHours, target));
+} catch (error) {
+  let message = 'Something went wrong: ';
+  if (error instanceof Error) {
+    message += 'Error: ' + error.message
+  }
+  console.error(message);
+}
